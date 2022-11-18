@@ -14,7 +14,10 @@ env:
 jobs:
   build:
     runs-on: ${{ matrix.os-version }}
-    
+    include:
+      - runs-on: ubuntu-latest
+        compiler: gcc
+        gcc: 8
     strategy:
       fail-fast: false
       matrix:
