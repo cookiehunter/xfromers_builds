@@ -19,9 +19,6 @@ jobs:
       matrix:
         include:
           - os-version: ubuntu-latest
-          - runs-on: ubuntu-latest
-            compiler: gcc
-            gcc: 8
             python-version: '3.8'
             cuda-version: '11.3.1'
             torch-install-command: 'torch==1.11.0+cu113 torchvision==0.12.0+cu113 --extra-index-url https://download.pytorch.org/whl/cu113'
@@ -31,6 +28,11 @@ jobs:
         id: python
         with:
           python-version: ${{ matrix.python-version }}
+      - uses: egor-tensin/setup-gcc@v1
+        id: gcc
+        with:
+          version: 8
+          platform: x64
       - id: prepare-build
         run: |
           git clone https://github.com/facebookresearch/xformers.git
