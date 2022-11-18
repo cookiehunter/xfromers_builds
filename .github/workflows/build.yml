@@ -31,7 +31,7 @@ jobs:
       - uses: egor-tensin/setup-gcc@v1
         id: gcc
         with:
-          version: 8
+          version: latest
           platform: x64
       - id: prepare-build
         run: |
