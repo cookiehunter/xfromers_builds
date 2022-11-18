@@ -7,7 +7,7 @@ on:
 
 env:
   NVCC_FLAGS: "-allow-unsupported-compiler"
-  TORCH_CUDA_ARCH_LIST: "7.0;7.5;8.0;8.6+PTX"
+  TORCH_CUDA_ARCH_LIST: "7.0;7.5;8.0"
   DISTUTILS_USE_SDK: 1
   FORCE_CUDA: 1
 
@@ -29,10 +29,6 @@ jobs:
         id: python
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: ilammy/msvc-dev-cmd@v1
-        id: msvc
-        with:
-          vsversion: 2022
       - id: prepare-build
         run: |
           git clone https://github.com/facebookresearch/xformers.git
@@ -42,10 +38,6 @@ jobs:
           pip install ${{ matrix.torch-install-command }}
           pip install -r requirements.txt
           pip install wheel
-      - id: winmemhack
-        if: runner.os == 'Windows'
-        run: |
-          (Get-Content xformers\setup.py) -replace '"4"', '"1"' | Out-File xformers\setup.py
       - uses: Jimver/cuda-toolkit@v0.2.8
         id: cuda-toolkit
         with:
@@ -56,11 +48,6 @@ jobs:
         run: |
           cd xformers
           python setup.py bdist_wheel
-      - id: rename
-        if: ${{ matrix.custom-suffix }}
-        run: |
-          cd xformers/dist/
-          rename 'dev0' 'dev0+cu117' *.whl 
       - uses: actions/upload-artifact@v3
         with:
           name: xformers-wheel-${{ matrix.os-version }}-${{ matrix.python-version }}-${{ matrix.cuda-version }}
